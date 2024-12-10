@@ -37,38 +37,44 @@ def generera_lista(bokstäver):
     svar = st.session_state.trie.starts_with(bokstäver.lower())
     viktat_svar = {key: value for (key, value) in st.session_state.name_weight.items() if key in svar}
     viktat_svar = dict(sorted(viktat_svar.items(), key = lambda x:x[1], reverse = True))
-    viktat_svar = list(viktat_svar.keys())[0:10]
+    viktat_svar = list(viktat_svar.keys())[0:20]
     st.session_state.svar = viktat_svar
 
 def skriv_ut_alternativ():
-    grupplista = []
+    #grupplista = []
     yrkeslista = []
     nyckelordslista = []
     for v in st.session_state.svar:
         id = st.session_state.name_id.get(v)
         typ = st.session_state.id_type.get(id)
+        vikt = st.session_state.name_weight.get(v)
 
         if typ == "group-title" or typ == "keyword":
-            grupplista.append(f"{v}({typ})")
-            grupplista.append(st.session_state.id_related.get(id))
+            nyckelordslista.append(f"{v}({typ}) {vikt}")
+            nyckelordslista.append(st.session_state.id_related.get(id))
 
         elif typ == "occupation-name":
-            yrkeslista.append(f"{v}({typ})")
+            yrkeslista.append(f"{v}({typ}) {vikt}")
 
         elif typ == "job-title":
             relaterad = st.session_state.id_related.get(id)[0]
-            yrkeslista.append(f"{v}({relaterad})")
+            yrkeslista.append(f"{v}({relaterad}) {vikt}")
 
         elif typ == "skill":
-            nyckelordslista.append(f"{v}({typ})")
+            nyckelordslista.append(f"{v}({typ}) {vikt}")
             nyckelordslista.append(st.session_state.id_related.get(id))
                        
         elif typ == "synonym-skill":
-            nyckelordslista.append(f"{v}({typ})")
+            nyckelordslista.append(f"{v}({typ}) {vikt}")
             nyckelordslista.append(st.session_state.id_related.get(id))
+    
+    yrkeslista = yrkeslista[0:5]
+    nyckelordslista = nyckelordslista[0:10]
 
-    st.write(grupplista)
+    #st.write(grupplista)
+    st.write("Yrkesbenämningar och jobtitlar")
     st.write(yrkeslista)
+    st.write("Grupperande begrepp")
     st.write(nyckelordslista)
 
 
