@@ -70,8 +70,8 @@ def skriv_ut_alternativ():
             nyckelordslista.append(st.session_state.id_related.get(id))
 
         elif typ == "synonym-occupation":
-            nyckelordslista.append(f"{v}({typ}) {vikt}")
-            nyckelordslista.append(st.session_state.id_related.get(id))
+            avbökningslista.append(f"{v}({typ}) {vikt}")
+            avbökningslista.append(st.session_state.id_related.get(id))
     
     yrkeslista = yrkeslista[0:5]
     nyckelordslista = nyckelordslista[0:10]
