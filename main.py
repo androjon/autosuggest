@@ -41,9 +41,10 @@ def generera_lista(bokstäver):
     st.session_state.svar = viktat_svar
 
 def skriv_ut_alternativ():
-    #grupplista = []
     yrkeslista = []
     nyckelordslista = []
+    avbökningslista = []
+
     for v in st.session_state.svar:
         id = st.session_state.name_id.get(v)
         typ = st.session_state.id_type.get(id)
@@ -67,15 +68,22 @@ def skriv_ut_alternativ():
         elif typ == "synonym-skill":
             nyckelordslista.append(f"{v}({typ}) {vikt}")
             nyckelordslista.append(st.session_state.id_related.get(id))
+
+        elif typ == "synonym-occupation":
+            nyckelordslista.append(f"{v}({typ}) {vikt}")
+            nyckelordslista.append(st.session_state.id_related.get(id))
     
     yrkeslista = yrkeslista[0:5]
     nyckelordslista = nyckelordslista[0:10]
+    avbökningslista = avbökningslista[0:6]
 
     #st.write(grupplista)
     st.write("Yrkesbenämningar och jobtitlar")
     st.write(yrkeslista)
     st.write("Grupperande begrepp")
     st.write(nyckelordslista)
+    st.write("Avbökningsord")
+    st.write(avbökningslista)
 
 
 def testa_autosuggest():
