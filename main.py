@@ -38,7 +38,7 @@ def generera_lista(bokstäver):
     svar = st.session_state.trie.starts_with(bokstäver.lower())
     viktat_svar = {key: value for (key, value) in st.session_state.name_weight.items() if key in svar}
     viktat_svar = dict(sorted(viktat_svar.items(), key = lambda x:x[1], reverse = True))
-    viktat_svar = list(viktat_svar.keys())[0:30]
+    viktat_svar = list(viktat_svar.keys())[0:100]
     st.session_state.svar = viktat_svar
 
 def skriv_ut_alternativ():
