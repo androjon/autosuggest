@@ -26,6 +26,7 @@ def hämta_hem_data():
         st.session_state.id_related = import_data("id_related.json")
         st.session_state.id_fields = import_data("id_fields.json")
         st.session_state.trie = insert_trie()
+        st.session_state.synonymoccupations = import_data("synonymoccupations_json")
         st.session_state.svar = []
 
 def show_initial_information():
@@ -37,22 +38,26 @@ def generera_lista(bokstäver):
     svar = st.session_state.trie.starts_with(bokstäver.lower())
     viktat_svar = {key: value for (key, value) in st.session_state.name_weight.items() if key in svar}
     viktat_svar = dict(sorted(viktat_svar.items(), key = lambda x:x[1], reverse = True))
-    viktat_svar = list(viktat_svar.keys())[0:20]
+    viktat_svar = list(viktat_svar.keys())[0:30]
     st.session_state.svar = viktat_svar
 
 def skriv_ut_alternativ():
     yrkeslista = []
+    grupperande_yrkesbegrepp = []
     nyckelordslista = []
-    avbökningslista = []
 
     for v in st.session_state.svar:
+        if v == "projektledare":
+            print(v)
+            #print(st.session_state.name_id.get(v))
         id = st.session_state.name_id.get(v)
         typ = st.session_state.id_type.get(id)
         vikt = st.session_state.name_weight.get(v)
 
-        if typ == "group-title" or typ == "keyword":
-            nyckelordslista.append(f"{v}({typ}) {vikt}")
-            nyckelordslista.append(st.session_state.id_related.get(id))
+        if typ == "group-title":
+            print(v)
+            grupperande_yrkesbegrepp.append(f"{v}({typ}) {vikt}")
+            grupperande_yrkesbegrepp.append(st.session_state.id_related.get(id))
 
         elif typ == "occupation-name":
             yrkeslista.append(f"{v}({typ}) {vikt}")
@@ -61,30 +66,26 @@ def skriv_ut_alternativ():
             relaterad = st.session_state.id_related.get(id)[0]
             yrkeslista.append(f"{v}({relaterad}) {vikt}")
 
-        elif typ == "skill":
-            nyckelordslista.append(f"{v}({typ}) {vikt}")
-            nyckelordslista.append(st.session_state.id_related.get(id))
-                       
-        elif typ == "synonym-skill":
+        elif typ == "skill" or typ == "keyword" or typ == "synonym-skill":
             nyckelordslista.append(f"{v}({typ}) {vikt}")
             nyckelordslista.append(st.session_state.id_related.get(id))
 
-        elif typ == "synonym-occupation":
+        if v in st.session_state.synonymoccupations:
             print(v)
-            avbökningslista.append(f"{v}({typ}) {vikt}")
-            avbökningslista.append(st.session_state.id_related.get(id))
+            grupperande_yrkesbegrepp.append(f"{v}(syn-occ) {vikt}")
+            grupperande_yrkesbegrepp.append(st.session_state.id_related.get(v))
     
     yrkeslista = yrkeslista[0:5]
-    nyckelordslista = nyckelordslista[0:10]
-    avbökningslista = avbökningslista[0:6]
+    grupperande_yrkesbegrepp = grupperande_yrkesbegrepp[0:6]
+    nyckelordslista = nyckelordslista[0:6]
 
     #st.write(grupplista)
     st.write("Yrkesbenämningar och jobtitlar")
     st.write(yrkeslista)
-    st.write("Grupperande begrepp")
+    st.write("Grupperande yrkesbegrepp")
+    st.write(grupperande_yrkesbegrepp)
+    st.write("Kompetensbegrepp/nyckelord")
     st.write(nyckelordslista)
-    st.write("Avbökningsord")
-    st.write(avbökningslista)
 
 
 def testa_autosuggest():
