@@ -66,7 +66,7 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
     if max_occupations > 0:
         occupations = []
         for v in range(max_occupations):
-            if v <= len(st.session_state.occupations_response):
+            if v < len(st.session_state.occupations_response):
                 name = st.session_state.occupations_response[v]
                 id = st.session_state.names_id.get(name)
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
@@ -89,7 +89,7 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
     if max_keywords > 0:
         keywords = []
         for v in range(max_keywords):
-            if v <= len(st.session_state.keywords_response):            
+            if v < len(st.session_state.keywords_response):            
                 name = st.session_state.keywords_response[v]
                 id = st.session_state.names_id.get(name)
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
@@ -105,7 +105,7 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
     if max_skills > 0:
         skills = []
         for v in range(max_keywords):
-            if v <= len(st.session_state.skills_response):
+            if v < len(st.session_state.skills_response):
                 name = st.session_state.skills_response[v]
                 id = st.session_state.names_id.get(name)
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
@@ -121,7 +121,7 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
     if max_groups > 0:
         groups = []
         for v in range(max_keywords):
-            if v <= len(st.session_state.groups_response):
+            if v < len(st.session_state.groups_response):
                 name = st.session_state.groups_response[v]
                 id = st.session_state.names_id.get(name)
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
