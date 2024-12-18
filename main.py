@@ -28,6 +28,7 @@ def collect_data():
         st.session_state.id_fields = import_data("id_occupation_fields.json")
         st.session_state.id_names_related = import_data("id_names_related.json")
         st.session_state.id_names_type = import_data("id_names_type.json")
+        st.session_state_symbols = import_data("symbols.json")
 
         st.session_state.trie_occupations = insert_trie(st.session_state.autosuggest_occupations)
         st.session_state.trie_keywords = insert_trie(st.session_state.autosuggest_keywords)
@@ -61,6 +62,24 @@ def generate_response(letters):
     st.session_state.skills_response = sort_response_based_on_weight(response_skills)
     st.session_state.groups_response = sort_response_based_on_weight(response_groups)
 
+def add_symbols_to_related(related):
+    related_with_symbols = []
+    for r in related:
+        r = r.replace('+', '')
+        id = st.session_state.names_id.get(r.lower())
+        field = st.session_state.id_fields.get(id)[0]
+        symbol = st.session_state_symbols.get(field)
+        related_with_symbols.append(f"{symbol} {r}")
+    return related_with_symbols
+
+def add_symbols_to_fields(data):
+    related_with_symbols = {}
+    for key, value in data.items():
+        symbol = st.session_state_symbols.get(key)
+        new_key = f"{symbol} {key}"
+        related_with_symbols[new_key] = value
+    return related_with_symbols    
+
 def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
 
     if max_occupations > 0:
@@ -74,13 +93,14 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
                 weight = st.session_state.names_weights.get(name)
                 if not type == "job-title":
                     field = st.session_state.id_fields.get(id)[0]
-                    showname = f"{preferred_label}({field}) {weight}"
+                    symbol = st.session_state_symbols.get(field)
+                    showname = f"{symbol} {preferred_label} ({weight})"
                     occupations.append(showname)
                 else:
                     related_occupation = st.session_state.id_names_related.get(id)[0]
                     id_related = st.session_state.names_id.get(related_occupation.lower())
                     field = st.session_state.id_fields.get(id_related)[0]
-                    showname = f"{preferred_label}/{related_occupation}({field}) {weight}"
+                    showname = f"{symbol} {related_occupation} / {preferred_label} ({weight})"
                     occupations.append(showname)
 
         st.write("Yrkesbenämningar och jobtitlar")
@@ -95,7 +115,9 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
                 weight = st.session_state.names_weights.get(name)
                 related = st.session_state.id_names_related.get(id)
-                showname = f"{preferred_label} {weight}"
+                related = add_symbols_to_related(related)
+                symbol = st.session_state_symbols.get("Nyckelord")
+                showname = f"{symbol} {preferred_label} ({weight})"
                 keywords.append(showname)
                 keywords.append(related)
 
@@ -111,7 +133,9 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
                 weight = st.session_state.names_weights.get(name)
                 related = st.session_state.id_names_related.get(id)
-                showname = f"{preferred_label} {weight}"
+                related = add_symbols_to_related(related)
+                symbol = st.session_state_symbols.get("Kompetensbegrepp")
+                showname = f"{symbol} {preferred_label} ({weight})"
                 skills.append(showname)
                 skills.append(related)
 
@@ -127,8 +151,10 @@ def print_alternatives(max_occupations, max_keywords, max_skills, max_groups):
                 preferred_label = st.session_state.id_names_preferred_label.get(id)
                 weight = st.session_state.names_weights.get(name)
                 related = st.session_state.id_names_related.get(id)
-                showname = f"{preferred_label} {weight}"
+                symbol = st.session_state_symbols.get("Grupperande yrkesbegrepp")
+                showname = f"{symbol} {preferred_label} ({weight})"
                 groups.append(showname)
+                related = add_symbols_to_fields(related)
                 groups.append(related)
 
         st.write("Grupperande yrkesbegrepp")
